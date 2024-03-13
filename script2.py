@@ -5,8 +5,14 @@ from comtypes import CLSCTX_ALL
 from pycaw.pycaw import AudioUtilities, IAudioEndpointVolume
 import wmi
 
+MIN_DISTANCE = 10
+MAX_VALID_DISTANCE = 200
+
 # Function to adjust volume (decreasing with higher distance)
 def adjust_volume(distance):
+  if distance < MIN_DISTANCE or distance > MAX_VALID_DISTANCE:
+      print("Distance out of range for volume adjustment:", distance)
+      return  # Skip adjustment
   # Normalize the distance to be between 0 and 1 (inverted)
   normalized_distance = 1.0 - min(1.0, max(0.0, distance / MAX_DISTANCE))
   # Adjust volume inversely proportionally to the normalized distance
@@ -22,6 +28,9 @@ def adjust_volume(distance):
 
 # Function to adjust brightness (decreasing with higher distance)
 def adjust_brightness(distance):
+  if distance < MIN_DISTANCE or distance > MAX_VALID_DISTANCE:
+      print("Distance out of range for brightness adjustment:", distance)
+      return  # Skip adjustment
 #   # Normalize the distance to be between 0 and 1 (inverted)
   normalized_distance = 1.0 - min(1.0, max(0.0, distance / MAX_DISTANCE))
 #   Adjust brightness inversely proportionally to the normalized distance
@@ -38,7 +47,7 @@ def adjust_brightness(distance):
   wmi.WMI(namespace='wmi').WmiMonitorBrightnessMethods()[0].WmiSetBrightness(brightness_change, 0)
 
 # Open serial connection to Arduino Uno
-ser = serial.Serial('COM6', 9600)  # Replace 'COMX' with the appropriate port
+ser = serial.Serial('COM1', 9600)  # Replace 'COMX' with the appropriate port
 
 # Define maximum distance of the sensors
 MAX_DISTANCE = 100  # Adjust as needed
